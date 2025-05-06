@@ -1,0 +1,16 @@
+version: '3'
+services:
+  app:
+    build: .
+    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p ${RAILS_PORT:-8000} -b '0.0.0.0'"
+    volumes:
+      - .:/app
+      - bundle_data:/usr/local/bundle
+    ports:
+      - "${RAILS_PORT:-8000}:${RAILS_PORT:-8000}"
+    environment:
+      - RAILS_ENV=development
+      - .env
+
+volumes:
+  bundle_data: 
