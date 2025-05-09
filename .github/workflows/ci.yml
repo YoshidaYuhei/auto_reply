@@ -45,6 +45,7 @@ jobs:
         image: mysql
         env:
           MYSQL_ALLOW_EMPTY_PASSWORD: true
+          MYSQL_DATABASE: app_test
         ports:
           - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
@@ -68,9 +69,24 @@ jobs:
           ruby-version: .ruby-version
           bundler-cache: true
 
+      - name: Setup database.yml
+        run: |
+          cat > config/database.yml << EOF
+          test:
+            adapter: mysql2
+            encoding: utf8mb4
+            pool: 5
+            username: root
+            password: 
+            host: 127.0.0.1
+            port: 3306
+            database: app_test
+          EOF
       - name: Run tests
         env:
           RAILS_ENV: test
-          DATABASE_URL: mysql2://127.0.0.1:3306
-          # REDIS_URL: redis://localhost:6379/0
-        run: bin/rails db:test:prepare test
+          DATABASE_URL: mysql2://root@127.0.0.1:3306/app_test
+        run: |
+          bin/rails db:create
+          bundle exec ridgepole -c config/database.yml -E test -f db/Schemafile --apply
+          bin/rails test
