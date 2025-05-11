@@ -1,4 +1,3 @@
-
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
@@ -73,6 +72,7 @@ gem 'ulid'
 
 # 認証
 gem 'oauth2'
+gem 'jwt'
 
 # リクエストコンテキスト中のデータの参照を抽象化する
 gem 'request_store'

@@ -600,6 +600,7 @@ DEPENDENCIES
   hiredis
   i18n_generators
   jbuilder (~> 2.13)
+  jwt
   listen (~> 3.9)
   lograge
   mission_control-jobs (~> 1.0.2)

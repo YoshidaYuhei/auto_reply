@@ -10,8 +10,8 @@ create_table :users,
   t.string :username, null: true
   t.string :email, null: true
   t.string :password, null: true
-  t.integer :role, null: false
-  t.integer :plan, null: false
+  t.integer :role, null: false, default: 0
+  t.integer :plan, null: false, default: 0
   t.string :reset_passowrd_token, null: true
   t.datetime :reset_passowrd_sent_at, null: true
   t.string :refresh_token, null: true

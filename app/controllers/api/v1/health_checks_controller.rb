@@ -1,6 +1,6 @@
 module Api
   module V1
-    class HealthChecksController < ApplicationController
+    class HealthChecksController < BaseController
       def index
         message = HealthCheck.first.message
         render json: { message: }

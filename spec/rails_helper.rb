@@ -3,6 +3,7 @@ ENV['RAILS_ENV'] = 'test'
 require_relative '../config/environment'
 abort("The Rails environment is running in production mode!") if Rails.env.production?
 require 'rspec/rails'
+Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f }
 
 begin
   ActiveRecord::Migration.maintain_test_schema!
@@ -27,6 +28,7 @@ RSpec.configure do |config|
   end
 
   config.include FactoryBot::Syntax::Methods
+  config.include RequestSpecHelper, type: :request
 end
 
 Shoulda::Matchers.configure do |config|
