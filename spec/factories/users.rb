@@ -17,7 +17,7 @@
 FactoryBot.define do
   factory :user do
     username { 'test_user' }
-    email { 'test@example.com' }
+    sequence(:email) { |n| "user#{n}@example.com" }
     password { 'password' }
     role { 0 }
     plan { 0 }
@@ -29,6 +29,10 @@ FactoryBot.define do
           user: instance
         )
       end
+    end
+
+    trait :with_refresh_token do
+      refresh_token { JwtService.encode({ user_id: id, exp: 14.days.from_now.to_i }) }
     end
 
     trait :with_user_profile do

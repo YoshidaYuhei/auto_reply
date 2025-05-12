@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe Api::V1::BaseController, type: :controller do
   controller(Api::V1::BaseController) do
-    before_action :authenticate!
+    before_action :authenticate_by_jwt!
     def index
       render json: { message: 'success' }
     end

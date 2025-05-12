@@ -8,8 +8,8 @@ end
 create_table :users,
              force: :cascade do |t|
   t.string :username, null: true
-  t.string :email, null: true
-  t.string :password, null: true
+  t.string :email, null: false
+  t.string :password_digest, null: false
   t.integer :role, null: false, default: 0
   t.integer :plan, null: false, default: 0
   t.string :reset_passowrd_token, null: true

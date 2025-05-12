@@ -1,42 +1,53 @@
 module Api
   module V1
     class UsersController < BaseController
-      skip_before_action :authenticate!, only: [ :create ]
+      skip_before_action :authenticate_by_jwt!, only: [ :create, :login ]
 
       def create
         user = User.new(user_params)
 
         if user.save
-          token = JwtService.encode(user_id: user.id)
+          access_token = JwtService.encode(user_id: user.id)
+          user.refresh_token = JwtService.encode({ user_id: user.id, exp: 14.days.from_now.to_i })
+          user.save!
           set_device(user)
-          render json: {
-            user: {
-              id: user.id,
-              email: user.email
-            },
-            token:
-          }, status: :created
+          render json: { access_token: }, status: :created
         else
-          render json: {
-            status: 'error',
-            message: 'ユーザー登録に失敗しました',
-            errors: user.errors.full_messages
-          }, status: :bad_request
+          render json: { message: 'ユーザー登録に失敗しました' }, status: :bad_request
         end
+      end
+
+      def login
+        user = User.find_by(email: params[:email])
+        user.refresh_token = JwtService.encode({ user_id: user.id, exp: 14.days.from_now.to_i })
+
+        if user&.authenticate(params[:password])
+          user.save!
+          access_token = JwtService.encode(user_id: user.id)
+          render json: { access_token: }
+        else
+          render json: { message: 'ログインに失敗しました' }, status: :unauthorized
+        end
+      end
+
+      def logout
+        current_user.refresh_token = nil
+        current_user.save!
+        render json: { message: 'ログアウトしました' }, status: :no_content
       end
 
       private
 
       def user_params
-        params.require(:user).permit(:email, :password, :password_confirmation)
+        params.permit(:email, :password)
       end
 
       def set_device(user)
-        return if request.headers['X-Device-ID'].blank?
+        return if device_id.blank?
 
         Device.create!(
-          key: request.headers['X-Device-ID'],
-          os_type: request.headers['Os_Type'],
+          key: device_id,
+          os_type:,
           user:
         )
       end
