@@ -2,7 +2,10 @@
 
 
 # マイグレーション
-bundle exec ridgepole -c config/database.yml -s primary -a -f db/Schemafile 
+docker compose run --rm app bundle exec ridgepole -c config/database.yml -s primary -a -f db/Schemafile
 
 # Rspec
-bundle exec rspec spec/...
+docker compose run --rm app bundle exec rspec spec/...
+
+# Annotate
+docker compose run --rm app bundle exec annotaterb models
