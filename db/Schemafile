@@ -12,8 +12,8 @@ create_table :users,
   t.string :password_digest, null: false
   t.integer :role, null: false, default: 0
   t.integer :plan, null: false, default: 0
-  t.string :reset_passowrd_token, null: true
-  t.datetime :reset_passowrd_sent_at, null: true
+  t.string :password_reset_token, null: true
+  t.datetime :password_reset_sent_at, null: true
   t.string :refresh_token, null: true
   t.datetime :created_at, precision: nil, null: false
   t.datetime :updated_at, precision: nil, null: false

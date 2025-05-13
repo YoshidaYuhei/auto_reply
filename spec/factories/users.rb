@@ -3,13 +3,13 @@
 # Table name: users
 #
 #  id                     :bigint           not null, primary key
-#  email                  :string(255)
-#  password               :string(255)
-#  plan                   :integer          not null
+#  email                  :string(255)      not null
+#  password_digest        :string(255)      not null
+#  password_reset_sent_at :datetime
+#  password_reset_token   :string(255)
+#  plan                   :integer          default(0), not null
 #  refresh_token          :string(255)
-#  reset_passowrd_sent_at :datetime
-#  reset_passowrd_token   :string(255)
-#  role                   :integer          not null
+#  role                   :integer          default(0), not null
 #  username               :string(255)
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
@@ -17,7 +17,7 @@
 FactoryBot.define do
   factory :user do
     username { 'test_user' }
-    sequence(:email) { |n| "user#{n}@example.com" }
+    email { Faker::Internet.email }
     password { 'password' }
     role { 0 }
     plan { 0 }
@@ -33,6 +33,11 @@ FactoryBot.define do
 
     trait :with_refresh_token do
       refresh_token { JwtService.encode({ user_id: id, exp: 14.days.from_now.to_i }) }
+    end
+
+    trait :with_password_reset_token do
+      password_reset_token { SecureRandom.urlsafe_base64 }
+      password_reset_sent_at { Time.current }
     end
 
     trait :with_user_profile do
